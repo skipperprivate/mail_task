@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Item 2-->
+        <!--Settings-->
         <scene sceneID="xW2-AM-3TX">
             <objects>
                 <viewController id="qW9-vv-EqU" customClass="SettingsViewController" customModule="TaskApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -26,13 +26,13 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="6pB-5c-Ngd"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item 2" id="3Ma-qi-3g2"/>
+                    <tabBarItem key="tabBarItem" title="Settings" id="3Ma-qi-3g2"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FYz-Fo-3cN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="500" y="594"/>
         </scene>
-        <!--Item 1-->
+        <!--Tweets-->
         <scene sceneID="zd7-LD-jog">
             <objects>
                 <viewController id="qhU-F4-htw" customClass="TweetViewController" customModule="TaskApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -41,25 +41,68 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Bcn-Wi-5w9">
-                                <rect key="frame" x="16" y="91" width="343" height="396"/>
+                                <rect key="frame" x="16" y="37" width="343" height="396"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="X8w-dg-BOS">
-                                        <rect key="frame" x="0.0" y="28" width="343" height="44"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Tweetcell" rowHeight="215" id="X8w-dg-BOS" customClass="TweetTableViewCell" customModule="TaskApp" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="343" height="215"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="X8w-dg-BOS" id="TKl-Yt-OGS">
-                                            <rect key="frame" x="0.0" y="0.0" width="343" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="343" height="214.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZlN-J7-8Hw">
+                                                    <rect key="frame" x="150" y="97" width="47" height="23"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ygL-Cz-t92">
+                                                    <rect key="frame" x="150" y="142" width="42" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="name" destination="ZlN-J7-8Hw" id="C4M-sM-bNk"/>
+                                            <outlet property="tweet_text" destination="ygL-Cz-t92" id="W2L-uP-RDb"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="qhU-F4-htw" id="mSh-bS-l39"/>
+                                    <outlet property="delegate" destination="qhU-F4-htw" id="HSS-Du-R0b"/>
+                                </connections>
                             </tableView>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="gsf-vq-XdS">
+                                <rect key="frame" x="139" y="465" width="97" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Nij-YY-oDa">
+                                <rect key="frame" x="139" y="521" width="97" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="ySA-mi-Kge"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Item 1" id="YVS-Yg-bvD"/>
+                    <tabBarItem key="tabBarItem" title="Tweets" id="YVS-Yg-bvD"/>
+                    <connections>
+                        <outlet property="cssTextField" destination="Nij-YY-oDa" id="Sp9-WJ-Snh"/>
+                        <outlet property="tableView" destination="Bcn-Wi-5w9" id="AVq-Jb-tDR"/>
+                        <outlet property="urlTextField" destination="gsf-vq-XdS" id="8gh-xf-Ao9"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aUu-J0-37u" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
