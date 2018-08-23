@@ -17,6 +17,7 @@ class TweetViewController: UIViewController, UITableViewDataSource {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var urlTextField: UITextField!
     @IBOutlet weak var cssTextField: UITextField!
+    @IBOutlet weak var time_label: UILabel!
     
     
     var document: Document = Document.init("")
@@ -24,20 +25,53 @@ class TweetViewController: UIViewController, UITableViewDataSource {
     var items: [Item] = []
     var tweets: [Tweet] = []
     
+    var urls: [String] = []
     
+    let defaults = UserDefaults.standard
+    
+    var tweet_Timer: Timer!
+    
+    var time = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        urlTextField.text = "https://twitter.com/search?q=realdonaldtrump"
+        //urlTextField.text = "https://twitter.com/search?q=realdonaldtrump"
+        urlTextField.text = "https://twitter.com/oleg02171931"
         cssTextField.text = "div"
         
+        //let defaults = UserDefaults.standard
+        
+        //let show_image = defaults.bool(forKey: "Show_image")
         
         tableView.dataSource = self
         downloadHTML()
+        //tweet_Timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(TweetViewController.iterate), userInfo: nil, repeats: true)
         //print(items)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        tweet_Timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(TweetViewController.iterate), userInfo: nil, repeats: true)
+    }
+    
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        tweet_Timer.invalidate()
+    }
+    
+    @objc func iterate(){
+        time += 1
+        time_label.text = String(time)
+        
+        if time == 60 {
+            time = 0
+            
+            tweets.removeAll()
+            tableView.reloadData()
+            
+            downloadHTML()
+        }
+    }
     
     
     func downloadHTML() {
@@ -56,15 +90,26 @@ class TweetViewController: UIViewController, UITableViewDataSource {
             //let d = try document.text()
             let srcs: Elements = try document.select("p.tweet-text")
             let srcs1: Elements = try document.select("strong.u-textTruncate")
+            let image_srcs: Elements = try document.select("img.js-action-profile-avatar")
+            
+            for img in image_srcs {
+                let url = try img.attr("src")
+                self.urls.append(url)
+                //print(url)
+            }
             
             var i = 0
             
             for (element,element2) in zip(srcs,srcs1) {
                 let text = try element.text()
                 let name = try element2.text()
+                let url_string = self.urls[i]
+                i = i + 1
+                //print(url_string)
                 //print(text)
-                tweets.append(Tweet(author: name, tweet_text: text))
+                tweets.append(Tweet(author: name, tweet_text: text, url: url_string))
             }
+            
             
             // parse css query
             //parse()
@@ -128,11 +173,45 @@ class TweetViewController: UIViewController, UITableViewDataSource {
         
         let tweet:Tweet = tweets[indexPath.row]
         //print(tweet.author!)
+        cell.textLabel?.numberOfLines = 0
     
-        cell.textLabel?.text = tweet.author! + "\n" + tweet.tweet_text!
+        cell.textLabel?.text = tweet.author + "\n" + tweet.tweet_text
     
-        cell.name.text = tweet.author
-        cell.tweet_text.text = tweet.tweet_text
+        let show_image = defaults.bool(forKey: "Show_image")
+    
+        if (show_image == true){
+            print("display")
+            if let url = URL(string:tweet.image_url){
+                do{
+                    
+                    let data = try Data(contentsOf: url)
+                    cell.imageView?.image = UIImage(data: data)
+                    
+                } catch let er{
+                    
+                }
+            }
+            
+        } else{
+            print("not display")
+            
+        }
+    
+        /*if let url = URL(string:tweet.image_url){
+            do{
+    
+                let data = try Data(contentsOf: url)
+                cell.imageView?.image = UIImage(data: data)
+                
+            } catch let er{
+                
+            }
+        }*/
+    
+
+    
+       // cell.name.text = tweet.author
+       // cell.tweet_text.text = tweet.tweet_text
     
         return  cell
     }

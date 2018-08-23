@@ -11,9 +11,10 @@ import UIKit
 class TweetTableViewCell: UITableViewCell {
 
     //@IBOutlet weak var profile_image: UIImageView!
-    @IBOutlet weak var name: UILabel!
-    @IBOutlet weak var tweet_text: UILabel!
+   // @IBOutlet weak var name: UILabel!
+    //@IBOutlet weak var tweet_text: UILabel!
     
+    @IBOutlet weak var profile_image: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -26,4 +27,6 @@ class TweetTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+
+    
 }
