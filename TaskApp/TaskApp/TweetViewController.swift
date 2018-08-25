@@ -33,7 +33,7 @@ class TweetViewController: UIViewController, UITableViewDataSource {
     
     var url = "https://twitter.com/"
     
-    
+    var username = ""
     
     
     
@@ -64,6 +64,12 @@ class TweetViewController: UIViewController, UITableViewDataSource {
             
         }
         
+        let defaults = UserDefaults.standard
+        
+        urlTextField.text = defaults.string(forKey: "username")
+        
+        url = "https://twitter.com/" + urlTextField.text!
+        
         tableView.reloadData()
         
     }
@@ -88,6 +94,7 @@ class TweetViewController: UIViewController, UITableViewDataSource {
         } catch{
             
         }
+        
     }
     
     
@@ -115,6 +122,7 @@ class TweetViewController: UIViewController, UITableViewDataSource {
             time = 60
             
             tweets.removeAll()
+            
             tableView.reloadData()
             
             downloadHTML()
@@ -182,20 +190,31 @@ class TweetViewController: UIViewController, UITableViewDataSource {
         }
         
         do {
-            // content of url
+            
             let html = try String.init(contentsOf: url2)
-            // parse it into a Document
             document = try SwiftSoup.parse(html)
-            //let d = try document.text()
+            
             let srcs: Elements = try document.select("p.tweet-text")
             let srcs1: Elements = try document.select("strong.u-textTruncate")
             let image_srcs: Elements = try document.select("img.js-action-profile-avatar")
+            let usernames: Elements = try document.select("span.u-textTruncate")
+            
+            for us in usernames {
+                username = try us.text()
+            }
+            
+            
+            let defaults = UserDefaults.standard
+            
+            defaults.set(username, forKey: "username")
+            
+            self.urlTextField.text = username
             
             for img in image_srcs {
+                
                 let url1 = try img.attr("src")
-                //print(url1)
                 self.urls.append(url1)
-                //print(url)
+                
             }
             
             var i = 0
@@ -204,9 +223,9 @@ class TweetViewController: UIViewController, UITableViewDataSource {
                 let text = try element.text()
                 let name = try element2.text()
                 let url_string = self.urls[i]
+                
                 i = i + 1
-                //print(url_string)
-                //print(text)
+                
                 tweets.append(Tweet(author: name, tweet_text: text, url: url_string))
             }
             
@@ -235,7 +254,7 @@ class TweetViewController: UIViewController, UITableViewDataSource {
     
         
         let tweet:Tweet = tweets[indexPath.row]
-        //print(tweet.author!)
+    
         cell.textLabel?.numberOfLines = 0
     
         cell.textLabel?.text = tweet.author + "\n" + tweet.tweet_text
@@ -244,7 +263,7 @@ class TweetViewController: UIViewController, UITableViewDataSource {
     
     
         if (show_image == true){
-            //print("display")
+            
             if let url = URL(string:tweet.image_url){
                 
                 do{
@@ -257,8 +276,7 @@ class TweetViewController: UIViewController, UITableViewDataSource {
                 }
             }
             
-        } else{
-            //print("not display")
+            
             
         }
     
