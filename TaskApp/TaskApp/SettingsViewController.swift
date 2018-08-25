@@ -12,6 +12,8 @@ class SettingsViewController: UIViewController {
 
     @IBOutlet weak var switch_btn: UISwitch!
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -28,6 +30,8 @@ class SettingsViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
 
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -47,7 +51,7 @@ class SettingsViewController: UIViewController {
         } else{
             
             defaults.set(false, forKey: "Show_image")
-            print("close")
+           // print("close")
             
         }
         

@@ -15,6 +15,7 @@
 		0D81472021235F330068E39A /* TaskAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D81471F21235F330068E39A /* TaskAppUITests.swift */; };
 		0D81472E212363760068E39A /* TweetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D81472D212363760068E39A /* TweetViewController.swift */; };
 		0D814730212363A40068E39A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D81472F212363A40068E39A /* SettingsViewController.swift */; };
+		0DA464432131C9F30024F0CF /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0DA46439213169FA0024F0CF /* Model.xcdatamodeld */; };
 		0DCD5799212E083E00D4367A /* Tweet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD5798212E083E00D4367A /* Tweet.swift */; };
 		0DCD579B212E0C7400D4367A /* TweetTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCD579A212E0C7400D4367A /* TweetTableViewCell.swift */; };
 		52AE04018748F8F64698DFCE /* Pods_TaskAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DED8B87F174C35FD55D4D445 /* Pods_TaskAppTests.framework */; };
@@ -54,6 +55,7 @@
 		0D81472121235F330068E39A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0D81472D212363760068E39A /* TweetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweetViewController.swift; sourceTree = "<group>"; };
 		0D81472F212363A40068E39A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		0DA4643A213169FA0024F0CF /* Model.xcdatamodel */ = {isa = PBXFileReference; explicitFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		0DCD5798212E083E00D4367A /* Tweet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tweet.swift; sourceTree = "<group>"; };
 		0DCD579A212E0C7400D4367A /* TweetTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweetTableViewCell.swift; sourceTree = "<group>"; };
 		2A09D8E40AB4486B80FEFE12 /* Pods_TaskAppUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TaskAppUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -129,6 +131,7 @@
 				0D81470621235F330068E39A /* Assets.xcassets */,
 				0D81470821235F330068E39A /* LaunchScreen.storyboard */,
 				0D81470B21235F330068E39A /* Info.plist */,
+				0DA46439213169FA0024F0CF /* Model.xcdatamodeld */,
 			);
 			path = TaskApp;
 			sourceTree = "<group>";
@@ -389,6 +392,7 @@
 				0D814730212363A40068E39A /* SettingsViewController.swift in Sources */,
 				0DCD579B212E0C7400D4367A /* TweetTableViewCell.swift in Sources */,
 				0DCD5799212E083E00D4367A /* Tweet.swift in Sources */,
+				0DA464432131C9F30024F0CF /* Model.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -723,6 +727,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		0DA46439213169FA0024F0CF /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				0DA4643A213169FA0024F0CF /* Model.xcdatamodel */,
+			);
+			currentVersion = 0DA4643A213169FA0024F0CF /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 0D8146F421235F320068E39A /* Project object */;
 }

@@ -8,7 +8,10 @@
 
 import UIKit
 import SwiftSoup
+import CoreData
 
+
+let cache = NSCache<NSString, AnyObject>()
 class TweetViewController: UIViewController, UITableViewDataSource {
 
     typealias Item = (text: String, html: String)
@@ -16,14 +19,17 @@ class TweetViewController: UIViewController, UITableViewDataSource {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var urlTextField: UITextField!
-    @IBOutlet weak var cssTextField: UITextField!
+    //@IBOutlet weak var cssTextField: UITextField!
     @IBOutlet weak var time_label: UILabel!
     
+    @IBOutlet weak var search_btn: UIButton!
     
     var document: Document = Document.init("")
     
-    var items: [Item] = []
+    var items: [NSManagedObject] = []
     var tweets: [Tweet] = []
+    
+    
     
     var urls: [String] = []
     
@@ -31,40 +37,126 @@ class TweetViewController: UIViewController, UITableViewDataSource {
     
     var tweet_Timer: Timer!
     
-    var time = 0
+    var time = 60
+    
+    var url = "https://twitter.com/"
+    
+    
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //urlTextField.text = "https://twitter.com/search?q=realdonaldtrump"
-        urlTextField.text = "https://twitter.com/oleg02171931"
-        cssTextField.text = "div"
-        
-        //let defaults = UserDefaults.standard
-        
-        //let show_image = defaults.bool(forKey: "Show_image")
+        urlTextField.text = ""
         
         tableView.dataSource = self
-        downloadHTML()
-        //tweet_Timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(TweetViewController.iterate), userInfo: nil, repeats: true)
-        //print(items)
+        
+        guard let app = UIApplication.shared.delegate as? AppDelegate else {return}
+        let managedContext = app.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Tweet_obj")
+        
+        /*let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Tweet_obj")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
+        do {
+            try managedContext.execute(deleteRequest)
+            try managedContext.save()
+        } catch {
+            print ("There was an error")
+        }*/
+        
+        do {
+            items = try managedContext.fetch(fetchRequest)
+            
+            //var t:Tweet?
+            //var k = 0
+            for i in items {
+                var name = i.value(forKey: "name") as! String
+                var url  = i.value(forKey: "image_url")  as! String
+                var text = i.value(forKey: "text")  as! String
+                tweets.append(Tweet(author: name, tweet_text: text, url: url))
+            }
+            
+            /*let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Tweet_obj")
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
+            do {
+                try managedContext.execute(deleteRequest)
+                try managedContext.save()
+            } catch {
+                print ("There was an error")
+            }*/
+            
+        } catch{
+            
+        }
+        
+        tableView.reloadData()
+        
     }
+    
+    
+    func save(name:String, text:String, url: String){
+        
+        guard let app = UIApplication.shared.delegate as? AppDelegate else {return}
+        let managedContext = app.persistentContainer.viewContext
+        let entity = NSEntityDescription.entity(forEntityName: "Tweet_obj", in: managedContext)!
+        let item = NSManagedObject(entity: entity, insertInto: managedContext)
+        
+        
+        
+        item.setValue(name, forKey: "name")
+        item.setValue(text, forKey: "text")
+        item.setValue(url, forKey: "image_url")
+        
+        do {
+            try managedContext.save()
+            
+        } catch{
+            
+        }
+    }
+    
     
     override func viewWillAppear(_ animated: Bool) {
         tweet_Timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(TweetViewController.iterate), userInfo: nil, repeats: true)
+        
+        /*for i in tweets{
+            save(name: i.author, text: i.tweet_text, url: i.image_url)
+        }*/
     }
+    
     
     
     override func viewWillDisappear(_ animated: Bool) {
+        
         tweet_Timer.invalidate()
+        
+        /*guard let app = UIApplication.shared.delegate as? AppDelegate else {return}
+        let managedContext = app.persistentContainer.viewContext
+        let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Tweet_obj")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
+        do {
+            try managedContext.execute(deleteRequest)
+            try managedContext.save()
+        } catch {
+            print ("There was an error")
+        }
+        
+        for i in tweets{
+            save(name: i.author, text: i.tweet_text, url: i.image_url)
+        }*/
+        
+        //tweet_in_core.append(<#T##newElement: NSManagedObject##NSManagedObject#>)
     }
     
+    
+    
     @objc func iterate(){
-        time += 1
+        time -= 1
         time_label.text = String(time)
         
-        if time == 60 {
-            time = 0
+        if time == 0 {
+            time = 60
             
             tweets.removeAll()
             tableView.reloadData()
@@ -74,17 +166,49 @@ class TweetViewController: UIViewController, UITableViewDataSource {
     }
     
     
+    
+    
+    @IBAction func search(_ sender: UIButton) {
+        
+        time = 60
+        
+        tweets.removeAll()
+        tableView.reloadData()
+        self.urls.removeAll()
+        
+        url = "https://twitter.com/" + urlTextField.text!
+        
+        downloadHTML()
+        
+        guard let app = UIApplication.shared.delegate as? AppDelegate else {return}
+        let managedContext = app.persistentContainer.viewContext
+        let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Tweet_obj")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
+        do {
+            try managedContext.execute(deleteRequest)
+            try managedContext.save()
+        } catch {
+            print ("There was an error")
+        }
+        
+        for i in tweets{
+            save(name: i.author, text: i.tweet_text, url: i.image_url)
+        }
+     
+    }
+    
+    
+    
     func downloadHTML() {
         
-        guard let url = URL(string: urlTextField.text ?? "") else {
-            // an error occurred
-            //UIAlertController.showAlert("Error: \(urlTextField.text ?? "") doesn't seem to be a valid URL", self)
+        guard let url2 = URL(string: self.url ?? "") else {
+            
             return
         }
         
         do {
             // content of url
-            let html = try String.init(contentsOf: url)
+            let html = try String.init(contentsOf: url2)
             // parse it into a Document
             document = try SwiftSoup.parse(html)
             //let d = try document.text()
@@ -93,8 +217,9 @@ class TweetViewController: UIViewController, UITableViewDataSource {
             let image_srcs: Elements = try document.select("img.js-action-profile-avatar")
             
             for img in image_srcs {
-                let url = try img.attr("src")
-                self.urls.append(url)
+                let url1 = try img.attr("src")
+                //print(url1)
+                self.urls.append(url1)
                 //print(url)
             }
             
@@ -111,52 +236,15 @@ class TweetViewController: UIViewController, UITableViewDataSource {
             }
             
             
-            // parse css query
-            //parse()
         } catch let error {
-            // an error occurred
-            //UIAlertController.showAlert("Error: \(error)", self)
-        }
-        
-        
-        tableView.reloadData()
-    }
-    
-    
-    
-    //Parse CSS selector
-    func parse() {
-        do {
-            //empty old items
-            items = []
-            // firn css selector
-            let elements: Elements = try document.select(cssTextField.text ?? "")
-            //transform it into a local object (Item)
-            for element in elements {
-                let text = try element.text()
-                let html = try element.outerHtml()
-                items.append(Item(text: text, html: html))
-            }
             
-        } catch let error {
-            //UIAlertController.showAlert("Error: \(error)", self)
         }
+        
         
         tableView.reloadData()
     }
     
-    /*@IBAction func chooseQuery(_ sender: Any) {
-        guard let viewController = storyboard?.instantiateViewController(
-            withIdentifier: "QueryViewController") as? QueryViewController  else {
-                return
-        }
-        viewController.completionHandler = {[weak self](resilt) in
-            self?.navigationController?.popViewController(animated: true)
-            self?.cssTextField.text = resilt.example
-            self?.parse()
-        }
-        self.show(viewController, sender: self)
-    }*/
+    
     
     
 
@@ -179,9 +267,11 @@ class TweetViewController: UIViewController, UITableViewDataSource {
     
         let show_image = defaults.bool(forKey: "Show_image")
     
+    
         if (show_image == true){
-            print("display")
+            //print("display")
             if let url = URL(string:tweet.image_url){
+                
                 do{
                     
                     let data = try Data(contentsOf: url)
@@ -193,25 +283,10 @@ class TweetViewController: UIViewController, UITableViewDataSource {
             }
             
         } else{
-            print("not display")
+            //print("not display")
             
         }
     
-        /*if let url = URL(string:tweet.image_url){
-            do{
-    
-                let data = try Data(contentsOf: url)
-                cell.imageView?.image = UIImage(data: data)
-                
-            } catch let er{
-                
-            }
-        }*/
-    
-
-    
-       // cell.name.text = tweet.author
-       // cell.tweet_text.text = tweet.tweet_text
     
         return  cell
     }
