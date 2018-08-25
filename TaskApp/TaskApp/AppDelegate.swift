@@ -1,11 +1,3 @@
-//
-//  AppDelegate.swift
-//  TaskApp
-//
-//  Created by Олег Максименко on 14.08.2018.
-//  Copyright © 2018 Олег Максименко. All rights reserved.
-//
-
 import UIKit
 import  CoreData
 

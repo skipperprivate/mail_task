@@ -1,11 +1,3 @@
-//
-//  TweetViewController.swift
-//  TaskApp
-//
-//  Created by Олег Максименко on 14.08.2018.
-//  Copyright © 2018 Олег Максименко. All rights reserved.
-//
-
 import UIKit
 import SwiftSoup
 import CoreData
@@ -19,7 +11,7 @@ class TweetViewController: UIViewController, UITableViewDataSource {
     
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var urlTextField: UITextField!
-    //@IBOutlet weak var cssTextField: UITextField!
+    
     @IBOutlet weak var time_label: UILabel!
     
     @IBOutlet weak var search_btn: UIButton!
@@ -56,20 +48,10 @@ class TweetViewController: UIViewController, UITableViewDataSource {
         let managedContext = app.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Tweet_obj")
         
-        /*let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Tweet_obj")
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
-        do {
-            try managedContext.execute(deleteRequest)
-            try managedContext.save()
-        } catch {
-            print ("There was an error")
-        }*/
         
         do {
             items = try managedContext.fetch(fetchRequest)
             
-            //var t:Tweet?
-            //var k = 0
             for i in items {
                 var name = i.value(forKey: "name") as! String
                 var url  = i.value(forKey: "image_url")  as! String
@@ -77,14 +59,6 @@ class TweetViewController: UIViewController, UITableViewDataSource {
                 tweets.append(Tweet(author: name, tweet_text: text, url: url))
             }
             
-            /*let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Tweet_obj")
-            let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
-            do {
-                try managedContext.execute(deleteRequest)
-                try managedContext.save()
-            } catch {
-                print ("There was an error")
-            }*/
             
         } catch{
             
@@ -118,11 +92,9 @@ class TweetViewController: UIViewController, UITableViewDataSource {
     
     
     override func viewWillAppear(_ animated: Bool) {
+        
         tweet_Timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(TweetViewController.iterate), userInfo: nil, repeats: true)
         
-        /*for i in tweets{
-            save(name: i.author, text: i.tweet_text, url: i.image_url)
-        }*/
     }
     
     
@@ -131,22 +103,6 @@ class TweetViewController: UIViewController, UITableViewDataSource {
         
         tweet_Timer.invalidate()
         
-        /*guard let app = UIApplication.shared.delegate as? AppDelegate else {return}
-        let managedContext = app.persistentContainer.viewContext
-        let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Tweet_obj")
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
-        do {
-            try managedContext.execute(deleteRequest)
-            try managedContext.save()
-        } catch {
-            print ("There was an error")
-        }
-        
-        for i in tweets{
-            save(name: i.author, text: i.tweet_text, url: i.image_url)
-        }*/
-        
-        //tweet_in_core.append(<#T##newElement: NSManagedObject##NSManagedObject#>)
     }
     
     
@@ -195,6 +151,25 @@ class TweetViewController: UIViewController, UITableViewDataSource {
             save(name: i.author, text: i.tweet_text, url: i.image_url)
         }
      
+        if tweets.count == 0 {
+            let alert = UIAlertController(title: "Некорректные данные", message: "Повторите попытку", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+                switch action.style{
+                case .default:
+                    print("default")
+                    
+                case .cancel:
+                    print("cancel")
+                    
+                case .destructive:
+                    print("destructive")
+                    
+                }}))
+            
+            self.present(alert, animated: true, completion: nil)
+            
+        }
+        
     }
     
     
