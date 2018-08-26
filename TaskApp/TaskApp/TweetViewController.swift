@@ -68,7 +68,7 @@ class TweetViewController: UIViewController, UITableViewDataSource {
         
         urlTextField.text = defaults.string(forKey: "username")
         
-        url = "https://twitter.com/" + urlTextField.text!
+        
         
         tableView.reloadData()
         
