@@ -68,6 +68,8 @@ class TweetViewController: UIViewController, UITableViewDataSource {
         
         urlTextField.text = defaults.string(forKey: "username")
         
+        defaults.set(true, forKey: "cache")
+        
         
         
         tableView.reloadData()
@@ -121,12 +123,31 @@ class TweetViewController: UIViewController, UITableViewDataSource {
         if time == 0 {
             time = 30
             
+            url = "https://twitter.com/" + urlTextField.text!
+            
             tweets.removeAll()
             
             tableView.reloadData()
             self.urls.removeAll()
             
             downloadHTML()
+            
+            guard let app = UIApplication.shared.delegate as? AppDelegate else {return}
+            let managedContext = app.persistentContainer.viewContext
+            let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Tweet_obj")
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
+            do {
+                try managedContext.execute(deleteRequest)
+                try managedContext.save()
+            } catch {
+                print ("There was an error")
+            }
+            
+            for i in tweets{
+                save(name: i.author, text: i.tweet_text, url: i.image_url)
+            }
+            
+            defaults.set(false, forKey: "cache")
         }
     }
     
@@ -179,6 +200,8 @@ class TweetViewController: UIViewController, UITableViewDataSource {
             
         }
         
+        defaults.set(false, forKey: "cache")
+        
     }
     
     
@@ -222,6 +245,7 @@ class TweetViewController: UIViewController, UITableViewDataSource {
             
             for (element,element2) in zip(srcs,srcs1) {
                 let text = try element.text()
+                //print(text)
                 let name = try element2.text()
                 let url_string = self.urls[i]
                 
@@ -262,22 +286,31 @@ class TweetViewController: UIViewController, UITableViewDataSource {
         
         let show_image = defaults.bool(forKey: "Show_image")
         
+        let cache = defaults.bool(forKey: "cache")
+        
         
         if (show_image == true){
             
-            if let url = URL(string:tweet.image_url){
+            if cache == true {
                 
-                do{
+                print("cached")
+                let data = defaults.object(forKey: "image") as! NSData
+                cell.imageView?.image = UIImage(data: data as Data)
+                
+            } else {
+            
+                if let url = URL(string:tweet.image_url){
+                
+                    do{
                     
-                    print(url)
+                        let data = try Data(contentsOf: url)
+                        cell.imageView?.image = UIImage(data: data)
+                        let imagedata:NSData = UIImagePNGRepresentation(UIImage(data: data)!) as! NSData
+                        defaults.set(data, forKey: "image")
                     
-                    let data = try Data(contentsOf: url)
-                    cell.imageView?.image = UIImage(data: data)
-                    let imagedata:NSData = UIImagePNGRepresentation(UIImage(data: data)!) as! NSData
-                    defaults.set(data, forKey: "image")
+                    } catch let er{
                     
-                } catch let er{
-                    
+                    }
                 }
             }
             
