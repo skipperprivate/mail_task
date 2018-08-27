@@ -5,7 +5,7 @@ import CoreData
 
 let cache = NSCache<NSString, AnyObject>()
 class TweetViewController: UIViewController, UITableViewDataSource {
-
+    
     typealias Item = (text: String, html: String)
     
     
@@ -29,7 +29,7 @@ class TweetViewController: UIViewController, UITableViewDataSource {
     
     var tweet_Timer: Timer!
     
-    var time = 60
+    var time = 30
     
     var url = "https://twitter.com/"
     
@@ -119,11 +119,12 @@ class TweetViewController: UIViewController, UITableViewDataSource {
         time_label.text = String(time)
         
         if time == 0 {
-            time = 60
+            time = 30
             
             tweets.removeAll()
             
             tableView.reloadData()
+            self.urls.removeAll()
             
             downloadHTML()
         }
@@ -134,7 +135,7 @@ class TweetViewController: UIViewController, UITableViewDataSource {
     
     @IBAction func search(_ sender: UIButton) {
         
-        time = 60
+        time = 30
         
         tweets.removeAll()
         tableView.reloadData()
@@ -158,7 +159,7 @@ class TweetViewController: UIViewController, UITableViewDataSource {
         for i in tweets{
             save(name: i.author, text: i.tweet_text, url: i.image_url)
         }
-     
+        
         if tweets.count == 0 {
             let alert = UIAlertController(title: "Некорректные данные", message: "Повторите попытку", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
@@ -241,35 +242,39 @@ class TweetViewController: UIViewController, UITableViewDataSource {
     
     
     
-
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tweets.count
     }
     
     
     
-   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Tweetcell", for: indexPath) as! TweetTableViewCell
-    
+        
         
         let tweet:Tweet = tweets[indexPath.row]
-    
+        
         cell.textLabel?.numberOfLines = 0
-    
+        
         cell.textLabel?.text = tweet.author + "\n" + tweet.tweet_text
-    
+        
         let show_image = defaults.bool(forKey: "Show_image")
-    
-    
+        
+        
         if (show_image == true){
             
             if let url = URL(string:tweet.image_url){
                 
                 do{
                     
+                    print(url)
+                    
                     let data = try Data(contentsOf: url)
                     cell.imageView?.image = UIImage(data: data)
+                    let imagedata:NSData = UIImagePNGRepresentation(UIImage(data: data)!) as! NSData
+                    defaults.set(data, forKey: "image")
                     
                 } catch let er{
                     
@@ -279,9 +284,9 @@ class TweetViewController: UIViewController, UITableViewDataSource {
             
             
         }
-    
-    
+        
+        
         return  cell
     }
-
+    
 }
